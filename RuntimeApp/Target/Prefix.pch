@@ -1,0 +1,25 @@
+//
+//  Prefix header
+//  transparent runtime concept
+//
+//  The contents of this file are implicitly included at the beginning of every source file.
+//
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+#endif
+
+
+// PSCLog allows logging without the timestamp etc
+#ifdef DEBUG
+    #if __has_feature(objc_arc)
+        #define PSCLog(format, ...) CFShow((__bridge CFStringRef)[NSString stringWithFormat:format, ## __VA_ARGS__]);
+    #else
+        #define PSCLog(format, ...) CFShow([NSString stringWithFormat:format, ## __VA_ARGS__]);
+    #endif
+#else
+    #define PSCLog(...) {}
+#endif
+
+
+// EXAMPLE: PSCLog(@"Trace: %@", [NSString stringWithUTF8String: __PRETTY_FUNCTION__]);
