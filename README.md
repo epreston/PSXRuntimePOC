@@ -1,9 +1,9 @@
 # Transparent Runtime Proof of Concept
 
-This POC application demonstrates the structure of a transparent runtime that uses objective c runtime’s [“associated objects”][associated-objects] to pair up a runtime observer class to perform [“key value observing”][key-value-observing] on a data model object.
+This POC application demonstrates the structure of a transparent runtime that uses objective c runtime’s [associated objects][associated-objects] to pair up a runtime observer class to perform [key value observing][key-value-observing] on a data model object.
 
 [associated-objects]: http://nshipster.com/associated-objects/
-[key-v.alue-observing]: http://nshipster.com/key-value-observing/
+[key-value-observing]: http://nshipster.com/key-value-observing/
 
 
 ## Project Overview
@@ -19,11 +19,23 @@ Three classes demonstrate the structure of this runtime concept.
 
 The runtime works by creating and associating an "Observer" to the registered "Subject".  Subsequent calls to the runtime query the "Subject" for its associated "Observer" to extract the information needed by the runtime. Through this association, the management of the "Observers" instance memory is tied to the "Subject" object. When the "Subject" is deallocated, it will deallocate all assocaited objects including its' "Observer". 
 
-The "Subject" objects and the code that interacts with them have no visibility of the "Observer".  Modifications to the "Subject" through key value coding compliant methods (like the ones created by the compiler for properties) are seen by the "Observer" through key value observing.  This may be used track values, modification state, or request action from the runtime.
+The "Subject" objects and the code that interacts with them have no visibility of the "Observer".  Modifications to the "Subject" through key value coding compliant methods (like the ones created by the compiler for properties) are seen by the "Observer" through key value observing. This may be used track values, modification state, or request action from the runtime.
+
+Note that the "Observers" dynamiclly query the interface of the model objects they track.  Properties can be added to the model and it will adjust. This allows a generic runtime "Observer" object to be used with different types of model objects.  In fact, nearly any class could be registered with the runtime and observed.  
+
+Finally, the observer object can be removed by calling the `+ (void)removeFromRuntime:(id)instance;` class method of the runtime.
+
+
+## Example Application
+
+The source code comments in the classes and example application should be fairly descriptive.
+
+A number of actions take place in the application delegates `- (void)applicationDidFinishLaunching:(NSNotification *)aNotification` method and the output is logged to the console. The interface presented contains simple actions that change the state of the model objects. The results are shown in the debug console. Logging allows one to see the state of the "Subject" data model objects and its assocaited "Observer".
+
+Additional types and uses for runtime metadata may be added in the future. The most direct example included watches a model object for changed properties and maintains a state vector of thier keypaths. This could be useful in only serializing the list of changed properties to a file.
 
 
 
- 
 
 
 
